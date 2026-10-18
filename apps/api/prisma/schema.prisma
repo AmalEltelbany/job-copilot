@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SourceKind {
+  GREENHOUSE
+  LEVER
+  ASHBY
+  REMOTIVE
+}
+
+enum Verdict {
+  STRONG
+  GOOD
+  STRETCH
+  SKIP
+}
+
+enum ApplicationStatus {
+  SAVED
+  DRAFTED
+  APPLIED
+  INTERVIEWING
+  OFFER
+  REJECTED
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String
+  passwordHash String
+  isDemo       Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  profile      Profile?
+  sources      JobSource[]
+  jobs         Job[]
+  applications Application[]
+  llmCalls     LlmCall[]
+}
+
+/// The candidate's facts, extracted from their CV and editable by them. `version` bumps on every change,
+/// so a match knows which version of the profile it was scored against.
+model Profile {
+  userId         String   @id
+  version        Int      @default(1)
+  data           Json
+  sourceFileName String?
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model JobSource {
+  id           String     @id @default(cuid())
+  userId       String
+  kind         SourceKind
+  identifier   String
+  label        String
+  lastSyncedAt DateTime?
+  lastError    String?
+  createdAt    DateTime   @default(now())
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs         Job[]
+
+  @@unique([userId, kind, identifier])
+}
+
+model Job {
+  id          String       @id @default(cuid())
+  userId      String
+  sourceId    String
+  externalId  String
+  title       String
+  company     String
+  location    String
+  remote      Boolean
+  url         String
+  applyUrl    String
+  description String
+  postedAt    DateTime?
+  /// Why the cheap rule-based filter skipped this job (null = passed), so it never costs a model call.
+  filteredOut String?
+  fetchedAt   DateTime     @default(now())
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source      JobSource    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  match       Match?
+  application Application?
+
+  @@unique([sourceId, externalId])
+  @@index([userId, filteredOut])
+}
+
+model Match {
+  jobId          String   @id
+  userId         String
+  profileVersion Int
+  score          Int
+  verdict        Verdict
+  summary        String
+  roleSeniority  String
+  requirements   Json
+  model          String
+  createdAt      DateTime @default(now())
+  job            Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([userId, score])
+}
+
+model Application {
+  id                String            @id @default(cuid())
+  userId            String
+  jobId             String            @unique
+  status            ApplicationStatus @default(SAVED)
+  coverLetter       String            @default("")
+  unsupportedClaims Json              @default("[]")
+  draftAttempts     Int               @default(0)
+  notes             String            @default("")
+  appliedAt         DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job               Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+}
+
+/// One row per model call: powers the daily budget and shows what the AI features actually cost.
+model LlmCall {
+  id              String   @id @default(cuid())
+  userId          String
+  purpose         String
+  model           String
+  inputTokens     Int
+  outputTokens    Int
+  cacheReadTokens Int      @default(0)
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
