@@ -2,6 +2,8 @@
 
 An AI job-search copilot. Upload your CV, follow the companies you'd like to work for, and it finds the roles that fit your real experience, explains why, and drafts cover letters that are fact-checked against your CV. **You stay in charge:** it never applies on your behalf.
 
+**[Live demo](https://job-copilot-livid.vercel.app)** (one click, no sign-up; the demo uses a simulated model so it costs nothing)
+
 **Next.js 16 · NestJS 12 · PostgreSQL · Prisma 7 · pg-boss · Claude API (structured outputs) · TanStack Query · Zod**
 
 ![Job detail: fit breakdown and a fact-checked cover letter](docs/job-detail.png)
