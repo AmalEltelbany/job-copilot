@@ -1,9 +1,9 @@
 import type { Verdict } from "@copilot/shared";
 
 const styles: Record<Verdict, string> = {
-  STRONG: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  STRONG: "bg-accent-soft text-accent",
   GOOD: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
-  STRETCH: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
+  STRETCH: "bg-gold-soft text-gold",
   SKIP: "bg-zinc-500/15 text-zinc-600 dark:text-zinc-400",
 };
 

@@ -7,6 +7,7 @@ import { verdicts, type Verdict } from "@copilot/shared";
 import { Input } from "@/components/ui";
 import { PageHeader } from "../app/app-shell";
 import { copilotApi, keys } from "../app/api";
+import { ScoreRing } from "./score-ring";
 import { VerdictBadge, verdictLabel } from "./verdict-badge";
 
 export function JobList() {
@@ -38,24 +39,36 @@ export function JobList() {
       {jobs.isPending && <p className="text-sm text-muted">Loading jobs…</p>}
       {jobs.isError && <p className="text-sm text-danger">{jobs.error.message}</p>}
       {jobs.data?.length === 0 && (
-        <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted">
+        <p className="rounded-xl border border-dashed border-border bg-surface p-10 text-center text-muted">
           No jobs here yet. <Link href="/app/sources" className="text-accent hover:underline">Follow a job board</Link> to start.
         </p>
       )}
 
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-3">
         {jobs.data?.map((job) => (
           <li key={job.id}>
-            <Link href={`/app/jobs/${job.id}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-border bg-surface px-4 py-3 hover:border-accent">
+            <Link
+              href={`/app/jobs/${job.id}`}
+              className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-surface px-5 py-4 transition hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
+            >
+              {job.match ? (
+                <ScoreRing score={job.match.score} verdict={job.match.verdict} />
+              ) : (
+                <span aria-hidden className="grid size-11 shrink-0 place-items-center rounded-full border border-dashed border-border text-xs text-muted">
+                  {job.filteredOut ? "—" : "…"}
+                </span>
+              )}
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">{job.title}</p>
+                <p className="truncate font-display text-lg font-semibold">{job.title}</p>
                 <p className="truncate text-sm text-muted">
                   {job.company} · {job.location || "Location not given"}{job.remote && !/remote/i.test(job.location) ? " · Remote" : ""}
                 </p>
               </div>
-              {job.applicationStatus && <span className="text-xs text-muted">{job.applicationStatus.toLowerCase()}</span>}
+              {job.applicationStatus && (
+                <span className="rounded-full bg-surface-muted px-2.5 py-0.5 text-xs font-medium capitalize text-muted">{job.applicationStatus.toLowerCase()}</span>
+              )}
               {job.match ? (
-                <VerdictBadge verdict={job.match.verdict} score={job.match.score} />
+                <VerdictBadge verdict={job.match.verdict} />
               ) : job.filteredOut ? (
                 <span className="text-xs text-muted">Filtered: {job.filteredOut}</span>
               ) : (
@@ -75,7 +88,7 @@ function FilterChip({ active, onClick, children }: { active: boolean; onClick: (
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`rounded-full border px-3 py-1 text-sm ${active ? "border-accent bg-accent text-accent-foreground" : "border-border bg-surface text-muted hover:text-foreground"}`}
+      className={`rounded-full border px-3.5 py-1.5 text-sm transition ${active ? "border-accent bg-accent text-accent-foreground" : "border-border bg-surface text-muted hover:border-accent/40 hover:text-foreground"}`}
     >
       {children}
     </button>

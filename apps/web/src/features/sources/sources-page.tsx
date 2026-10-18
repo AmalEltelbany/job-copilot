@@ -46,7 +46,7 @@ export function SourcesPage() {
       />
       <form onSubmit={submit} className="grid gap-4 rounded-xl border border-border bg-surface p-5 md:grid-cols-[12rem_1fr_1fr_auto] md:items-end">
         <Field label="Board type">
-          <select value={kind} onChange={(e) => setKind(e.target.value as SourceKind)} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+          <select value={kind} onChange={(e) => setKind(e.target.value as SourceKind)} className="rounded-md border border-border bg-surface px-3 py-2 text-sm">
             {sourceKinds.map((k) => <option key={k} value={k}>{help[k].label}</option>)}
           </select>
         </Field>

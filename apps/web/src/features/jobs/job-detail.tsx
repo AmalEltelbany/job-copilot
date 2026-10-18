@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { applicationStatuses, type ApplicationDto, type JobDetailDto } from "@copilot/shared";
 import { Button } from "@/components/ui";
 import { copilotApi, keys } from "../app/api";
+import { ScoreRing } from "./score-ring";
 import { VerdictBadge } from "./verdict-badge";
 
 export function JobDetail({ jobId }: { jobId: string }) {
@@ -16,18 +17,18 @@ export function JobDetail({ jobId }: { jobId: string }) {
   const j = job.data;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_24rem]">
+    <div className="grid gap-10 lg:grid-cols-[1fr_24rem]">
       <article>
         <Link href="/app/jobs" className="text-sm text-muted hover:text-foreground">← Jobs</Link>
-        <h1 className="mt-3 text-2xl font-semibold">{j.title}</h1>
+        <h1 className="mt-4 font-display text-4xl font-medium leading-tight tracking-tight">{j.title}</h1>
         <p className="mt-1 text-muted">
           {j.company} · {j.location || "Location not given"}{j.remote && !/remote/i.test(j.location) ? " · Remote" : ""}
         </p>
         <a href={j.url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm text-accent hover:underline">
           View the original posting ↗
         </a>
-        <h2 className="mb-2 mt-8 text-sm font-semibold">Description</h2>
-        <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{j.description || "No description provided."}</p>
+        <h2 className="mb-3 mt-10 font-display text-2xl font-medium">About the role</h2>
+        <p className="whitespace-pre-line leading-relaxed text-muted">{j.description || "No description provided."}</p>
       </article>
 
       <aside className="flex flex-col gap-6">
@@ -46,18 +47,26 @@ function MatchPanel({ job }: { job: JobDetailDto }) {
   const m = job.match;
   return (
     <Panel title="Fit">
-      <div className="flex items-center gap-3">
-        <VerdictBadge verdict={m.verdict} score={m.score} />
-        <span className="text-xs text-muted">Role level: {m.roleSeniority}</span>
+      <div className="flex items-center gap-4">
+        <ScoreRing score={m.score} verdict={m.verdict} size="lg" />
+        <div className="flex flex-col items-start gap-1.5">
+          <VerdictBadge verdict={m.verdict} />
+          <span className="text-xs text-muted">Role level: {m.roleSeniority}</span>
+        </div>
       </div>
       <p className="mt-3 text-sm">{m.summary}</p>
       <ul className="mt-4 flex flex-col gap-2">
         {m.requirements.map((r) => (
           <li key={r.requirement} className="text-sm">
-            <span className="me-1.5" aria-hidden>{r.met === "yes" ? "✅" : r.met === "partly" ? "🟡" : "❌"}</span>
+            <span
+              aria-hidden
+              className={`me-2 inline-grid size-5 place-items-center rounded-full align-middle text-[11px] font-bold ${r.met === "yes" ? "bg-accent-soft text-accent" : r.met === "partly" ? "bg-gold-soft text-gold" : "bg-surface-muted text-muted"}`}
+            >
+              {r.met === "yes" ? "✓" : r.met === "partly" ? "◐" : "✕"}
+            </span>
             <span className={r.mustHave ? "font-medium" : ""}>{r.requirement}</span>
             {r.mustHave && <span className="ms-1 text-xs text-muted">(must-have)</span>}
-            {r.evidence && <span className="block ps-6 text-xs text-muted">{r.evidence}</span>}
+            {r.evidence && <span className="block ps-7 font-display text-[13px] italic text-muted">&ldquo;{r.evidence}&rdquo;</span>}
           </li>
         ))}
       </ul>
@@ -106,7 +115,7 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
         <select
           value={app.status}
           onChange={(e) => update.mutate({ status: e.target.value as ApplicationDto["status"] })}
-          className="rounded-lg border border-border bg-surface px-2 py-1 text-sm"
+          className="rounded-md border border-border bg-surface px-2 py-1 text-sm"
         >
           {applicationStatuses.map((s) => <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}</option>)}
         </select>
@@ -121,7 +130,7 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
       {draft.isError && <p className="mt-2 text-sm text-danger">{draft.error.message}</p>}
 
       {app.unsupportedClaims.length > 0 && (
-        <div role="alert" className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+        <div role="alert" className="mt-3 rounded-md border border-gold/40 bg-gold-soft p-3 text-sm">
           <p className="font-medium">Check these before sending: your profile doesn&apos;t back them up.</p>
           <ul className="mt-1 list-disc ps-5">
             {app.unsupportedClaims.map((c) => <li key={c.claim}>{c.claim}</li>)}
@@ -129,7 +138,7 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
         </div>
       )}
       {app.coverLetter && app.unsupportedClaims.length === 0 && (
-        <p className="mt-2 text-xs text-emerald-700 dark:text-emerald-400">✓ Every claim was checked against your profile.</p>
+        <p className="mt-2 rounded-md bg-accent-soft px-2.5 py-1.5 text-xs text-accent">✓ Every claim was checked against your profile.</p>
       )}
 
       <textarea
@@ -138,7 +147,7 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
         rows={12}
         placeholder="Draft a letter, or write your own."
         aria-label="Cover letter"
-        className="mt-3 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm leading-relaxed outline-none focus:border-accent"
+        className="mt-3 w-full rounded-md border border-border bg-background px-3.5 py-3 font-display text-[15px] leading-relaxed outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
       />
       <div className="mt-2 flex gap-2">
         <Button variant="secondary" disabled={!dirty || update.isPending} onClick={() => update.mutate({ coverLetter: letter })}>
@@ -148,7 +157,7 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
       </div>
 
       <div className="mt-5 flex flex-col gap-2 border-t border-border pt-4">
-        <a href={applyUrl} target="_blank" rel="noreferrer" className="rounded-lg bg-accent px-3.5 py-2 text-center text-sm font-medium text-accent-foreground hover:opacity-90">
+        <a href={applyUrl} target="_blank" rel="noreferrer" className="rounded-md bg-accent px-4 py-2.5 text-center text-sm font-medium text-accent-foreground hover:brightness-110">
           Open the application page ↗
         </a>
         {app.status !== "APPLIED" && (
@@ -162,8 +171,8 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-border bg-surface p-4" aria-label={title}>
-      <h2 className="mb-3 text-sm font-semibold">{title}</h2>
+    <section className="rounded-xl border border-border bg-surface p-5 shadow-sm" aria-label={title}>
+      <h2 className="mb-4 text-xs font-medium uppercase tracking-widest text-muted">{title}</h2>
       {children}
     </section>
   );

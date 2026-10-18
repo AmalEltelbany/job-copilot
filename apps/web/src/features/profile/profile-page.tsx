@@ -30,7 +30,7 @@ export function ProfilePage() {
           type="file"
           accept="application/pdf"
           aria-label="CV (PDF)"
-          className="mt-3 block text-sm file:me-3 file:rounded-lg file:border-0 file:bg-accent file:px-3 file:py-2 file:text-accent-foreground"
+          className="mt-3 block text-sm file:me-3 file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-accent-foreground"
           disabled={upload.isPending}
           onChange={(e) => {
             const file = e.target.files?.[0];
@@ -86,7 +86,7 @@ function ProfileForm({ profile, onSaved }: { profile: ProfileDto; onSaved: (p: P
       <Field label="Name"><Input name="fullName" defaultValue={p.fullName} required /></Field>
       <Field label="Headline"><Input name="headline" defaultValue={p.headline} /></Field>
       <Field label="Level you're applying for">
-        <select name="seniority" defaultValue={p.seniority} className="rounded-lg border border-border bg-surface px-3 py-2 text-sm">
+        <select name="seniority" defaultValue={p.seniority} className="rounded-md border border-border bg-surface px-3 py-2 text-sm">
           {seniorityLevels.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </Field>
@@ -106,7 +106,7 @@ function ProfileForm({ profile, onSaved }: { profile: ProfileDto; onSaved: (p: P
         <h3 className="mb-2 text-sm font-medium">Experience (from your CV)</h3>
         <ul className="flex flex-col gap-3">
           {p.experience.map((e) => (
-            <li key={`${e.company}-${e.start}`} className="rounded-lg bg-surface-muted p-3 text-sm">
+            <li key={`${e.company}-${e.start}`} className="rounded-md bg-surface-muted p-3 text-sm">
               <p className="font-medium">{e.title} · {e.company}</p>
               <p className="text-xs text-muted">{e.start} – {e.end ?? "present"}</p>
               <ul className="mt-1 list-disc ps-5 text-muted">{e.highlights.map((h) => <li key={h}>{h}</li>)}</ul>

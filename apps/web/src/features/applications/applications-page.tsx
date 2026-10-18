@@ -18,17 +18,17 @@ export function ApplicationsPage() {
         {applicationStatuses.map((status) => {
           const items = apps.data?.filter((a) => a.status === status) ?? [];
           return (
-            <section key={status} aria-label={status} className="rounded-xl bg-surface-muted p-3">
-              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+            <section key={status} aria-label={status} className="rounded-xl border border-border bg-surface-muted/60 p-3">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">
                 {status.toLowerCase()} <span className="font-normal">{items.length}</span>
               </h2>
               <ul className="flex flex-col gap-2">
                 {items.map((a) => (
                   <li key={a.id}>
-                    <Link href={`/app/jobs/${a.job.id}`} className="block rounded-lg border border-border bg-surface p-2.5 text-sm hover:border-accent">
-                      <span className="font-medium">{a.job.title}</span>
+                    <Link href={`/app/jobs/${a.job.id}`} className="block rounded-md border border-border bg-surface p-3 text-sm shadow-sm transition hover:border-accent/40 hover:shadow-md">
+                      <span className="font-display font-semibold">{a.job.title}</span>
                       <span className="block text-xs text-muted">{a.job.company}</span>
-                      {a.unsupportedClaims.length > 0 && <span className="mt-1 block text-xs text-amber-600">⚠ letter needs checking</span>}
+                      {a.unsupportedClaims.length > 0 && <span className="mt-1.5 block text-xs text-gold">⚠ letter needs checking</span>}
                     </Link>
                   </li>
                 ))}

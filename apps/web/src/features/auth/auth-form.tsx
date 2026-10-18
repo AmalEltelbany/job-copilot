@@ -6,7 +6,7 @@ import { useState, type FormEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { loginSchema, registerSchema } from "@copilot/shared";
-import { Button, Field, Input } from "@/components/ui";
+import { Button, Field, Input, Logo } from "@/components/ui";
 import { ApiError } from "@/lib/api-client";
 import { authApi } from "./auth-api";
 import { DemoButton } from "./demo-button";
@@ -48,53 +48,58 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const serverError = submit.error instanceof ApiError ? submit.error.message : null;
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-12">
-      <Link href="/" className="mb-8 text-sm text-muted hover:text-foreground">
-        ← Job Copilot
+    <div className="paper-lines flex flex-1 flex-col items-center justify-center px-4 py-12">
+      <Link href="/" className="mb-8" aria-label="Job Copilot home">
+        <Logo />
       </Link>
-      <h1 className="text-2xl font-semibold">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
-      <p className="mt-1 text-sm text-muted">
-        {mode === "login" ? "Sign in to see your matches." : "Then upload your CV to get started."}
-      </p>
+      <div className="w-full max-w-md rounded-xl border border-border bg-surface p-8 shadow-[0_24px_60px_-35px_rgba(22,32,27,0.4)]">
+        <h1 className="font-display text-3xl font-medium tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
+        <p className="mt-2 text-muted">
+          {mode === "login" ? "Sign in to see your matches." : "Then upload your CV to get started."}
+        </p>
 
-      <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4" noValidate>
-        {mode === "register" && (
-          <Field label="Name" error={fieldErrors.name}>
-            <Input name="name" autoComplete="name" required />
+        <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4" noValidate>
+          {mode === "register" && (
+            <Field label="Name" error={fieldErrors.name}>
+              <Input name="name" autoComplete="name" required />
+            </Field>
+          )}
+          <Field label="Email" error={fieldErrors.email}>
+            <Input name="email" type="email" autoComplete="email" required />
           </Field>
-        )}
-        <Field label="Email" error={fieldErrors.email}>
-          <Input name="email" type="email" autoComplete="email" required />
-        </Field>
-        <Field label="Password" error={fieldErrors.password}>
-          <Input
-            name="password"
-            type="password"
-            autoComplete={mode === "login" ? "current-password" : "new-password"}
-            required
-          />
-        </Field>
-        {serverError && <p className="text-sm text-danger" role="alert">{serverError}</p>}
-        <Button type="submit" disabled={submit.isPending}>
-          {submit.isPending ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
-        </Button>
-      </form>
+          <Field label="Password" error={fieldErrors.password}>
+            <Input
+              name="password"
+              type="password"
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              required
+            />
+          </Field>
+          {serverError && <p className="text-sm text-danger" role="alert">{serverError}</p>}
+          <Button type="submit" disabled={submit.isPending}>
+            {submit.isPending ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
+          </Button>
+        </form>
 
-      <div className="my-6 flex items-center gap-3 text-xs text-muted">
-        <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
+        <div className="my-6 flex items-center gap-3 text-xs text-muted">
+          <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
+        </div>
+        <DemoButton variant="secondary" />
+
+        <p className="mt-8 text-center text-sm text-muted">
+          {mode === "login" ? (
+            <>
+              New here? <Link className="text-accent hover:underline" href="/register">Create an account</Link>
+            </>
+          ) : (
+            <>
+              Already have an account? <Link className="text-accent hover:underline" href="/login">Sign in</Link>
+            </>
+          )}
+        </p>
       </div>
-      <DemoButton variant="secondary" />
-
-      <p className="mt-8 text-center text-sm text-muted">
-        {mode === "login" ? (
-          <>
-            New here? <Link className="text-accent hover:underline" href="/register">Create an account</Link>
-          </>
-        ) : (
-          <>
-            Already have an account? <Link className="text-accent hover:underline" href="/login">Sign in</Link>
-          </>
-        )}
+      <p className="mt-10 max-w-md text-center font-display text-lg italic text-muted">
+        &ldquo;A few well-matched, honest applications beat a hundred sent blind.&rdquo;
       </p>
     </div>
   );
