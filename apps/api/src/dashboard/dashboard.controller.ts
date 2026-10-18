@@ -4,6 +4,7 @@ import { AuthGuard } from '../auth/auth.guard.js';
 import { CurrentUser, type AuthUser } from '../common/request-context.js';
 import { LlmService } from '../llm/llm.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { QueueService } from '../queue/queue.service.js';
 
 @Controller('dashboard')
 @UseGuards(AuthGuard)
@@ -11,6 +12,7 @@ export class DashboardController {
   constructor(
     private readonly prisma: PrismaService,
     private readonly llm: LlmService,
+    private readonly queue: QueueService,
   ) {}
 
   @Get()
@@ -25,6 +27,8 @@ export class DashboardController {
       this.prisma.application.groupBy({ by: ['status'], where: { userId }, _count: true }),
       this.llm.callsToday(userId),
     ]);
+    // The UI polls this while work is pending, which resumes anything left in the queue.
+    this.queue.kick();
     return {
       hasProfile: !!profile,
       sources,

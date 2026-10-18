@@ -54,7 +54,7 @@ e2e              Playwright: demo journey and CV upload
 - Instructions plus profile form a stable prefix with a cache breakpoint, so every job scored for a user reuses the cached prefix.
 - Scoring runs at low effort (a screening judgment), while drafting and fact-checking use medium.
 
-**A queue in Postgres, not Redis.** Sync and scoring run on [pg-boss](https://github.com/timgit/pg-boss), which stores jobs in the same database and claims them with `SKIP LOCKED`. One less service to host, jobs survive restarts, failures retry with backoff, and `singletonKey` dedupes double clicks. Errors that won't fix themselves (a missing board, a refused or malformed model response) are recorded and not retried.
+**A queue in Postgres, not Redis.** Sync and scoring run on [pg-boss](https://github.com/timgit/pg-boss), which stores jobs in the same database and claims them with `SKIP LOCKED`. One less service to host, jobs survive restarts, failures retry with backoff, and `singletonKey` dedupes double clicks. Errors that won't fix themselves (a missing board, a refused or malformed model response) are recorded and not retried. On serverless hosts (`QUEUE_MODE=on-demand`) there is no long-lived worker: the API drains the queue after the response with `waitUntil`, whenever work is queued or a page polls for progress. CI runs the end-to-end suite in both modes.
 
 **A public demo that can't spend money.** Demo accounts get a fictional candidate and sample jobs, use a deterministic fake model, and can't fetch live boards.
 
@@ -87,9 +87,13 @@ pnpm dev                                    # API on :4100, web on :3100
 
 ## Deploy
 
-1. **Database:** a free Postgres on [Neon](https://neon.tech).
-2. **API on Render:** New → Blueprint → this repo (`render.yaml`). Set `DATABASE_URL`, `ANTHROPIC_API_KEY`, and `REAL_LLM_EMAILS` to your own email, so other sign-ups get the free simulated model instead of spending your API credit.
-3. **Web on Vercel:** import the repo with root directory `apps/web`, and set `API_URL` to the Render URL.
+Everything runs on free tiers: Postgres on [Neon](https://neon.tech), and both apps on Vercel.
+
+1. **Database:** a Neon Postgres. Use the direct (non-pooled) connection string: pg-boss and migrations need a session connection.
+2. **API on Vercel:** import the repo with root directory `apps/api` (`apps/api/vercel.json` builds and runs migrations). Set `DATABASE_URL`, `JWT_SECRET`, `NODE_ENV=production`, `QUEUE_MODE=on-demand`, and either `LLM_PROVIDER=fake` or `ANTHROPIC_API_KEY` plus `REAL_LLM_EMAILS` set to your own email, so other sign-ups get the free simulated model instead of spending your API credit.
+3. **Web on Vercel:** import the repo again with root directory `apps/web`, and set `API_URL` to the API's URL.
+
+`render.yaml` is kept for hosting the API as a long-running server instead (`QUEUE_MODE=worker`).
 
 ## What I'd add next
 

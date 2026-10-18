@@ -28,6 +28,7 @@ export class JobsService {
   }
 
   async list(userId: string, query: JobListQuery): Promise<JobSummaryDto[]> {
+    this.queue.kick();
     const where: Prisma.JobWhereInput = {
       userId,
       ...(query.includeFiltered ? {} : { filteredOut: null }),

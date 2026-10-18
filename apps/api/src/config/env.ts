@@ -11,6 +11,12 @@ const envSchema = z
     CLAUDE_MODEL: z.string().default('claude-opus-5-5'),
     LLM_DAILY_LIMIT: z.coerce.number().int().positive().default(150),
     /**
+     * worker: long-lived pg-boss workers poll the queue (a normal server).
+     * on-demand: serverless hosts (Vercel) can't keep a poller alive, so queued jobs
+     * are drained after the response, when work is sent or a page asks for status.
+     */
+    QUEUE_MODE: z.enum(['worker', 'on-demand']).default('worker'),
+    /**
      * Comma-separated emails allowed to use the real model. Empty means everyone.
      * On a public deployment, list only your own so strangers can't spend your API credit.
      */

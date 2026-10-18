@@ -21,6 +21,7 @@ export class SourcesService {
   }
 
   async list(userId: string): Promise<SourceDto[]> {
+    this.queue.kick();
     const sources = await this.prisma.jobSource.findMany({
       where: { userId },
       orderBy: { createdAt: 'asc' },
