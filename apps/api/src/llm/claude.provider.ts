@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { Anthropic } from '@anthropic-ai/sdk';
 import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod';
 import { z, type ZodType } from 'zod';
 import { candidateProfileSchema, claimCheckSchema, fitAssessmentSchema, type CandidateProfile } from '@copilot/shared';

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ApplicationsModule } from './applications/applications.module.js';
 import { AuthModule } from './auth/auth.module.js';
-import { validateEnv, type Env } from './config/env.js';
+import { RateLimitGuard } from './common/rate-limit.js';
+import { validateEnv } from './config/env.js';
 import { DashboardController } from './dashboard/dashboard.controller.js';
 import { HealthController } from './health/health.controller.js';
 import { JobsModule } from './jobs/jobs.module.js';
@@ -17,14 +17,6 @@ import { SourcesModule } from './sources/sources.module.js';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
-    ThrottlerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService<Env, true>) => ({
-        throttlers: [{ ttl: 60_000, limit: 300 }],
-        // The e2e suite creates many users a minute; production keeps the limits.
-        skipIf: () => config.get('NODE_ENV') === 'test',
-      }),
-    }),
     PrismaModule,
     QueueModule,
     LlmModule,
@@ -35,6 +27,6 @@ import { SourcesModule } from './sources/sources.module.js';
     ApplicationsModule,
   ],
   controllers: [HealthController, DashboardController],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [{ provide: APP_GUARD, useClass: RateLimitGuard }],
 })
 export class AppModule {}

@@ -1,9 +1,9 @@
 import { Body, Controller, Get, HttpCode, Post, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput, type UserDto } from '@copilot/shared';
+import { RateLimit } from '../common/rate-limit.js';
 import { ZodValidationPipe } from '../common/zod-validation.pipe.js';
 import { CurrentUser, type AuthUser } from '../common/request-context.js';
 import type { Env } from '../config/env.js';
@@ -13,7 +13,7 @@ import { AuthService } from './auth.service.js';
 import { SESSION_COOKIE, sessionCookieOptions } from './session.js';
 
 @Controller('auth')
-@Throttle({ default: { limit: 10, ttl: 60_000 } })
+@RateLimit(10)
 export class AuthController {
   constructor(
     private readonly auth: AuthService,
@@ -35,7 +35,7 @@ export class AuthController {
 
   /** A throwaway account with a sample profile and pre-scored jobs. Demo accounts never call the paid model. */
   @Post('demo')
-  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  @RateLimit(5)
   async startDemo(@Res({ passthrough: true }) res: Response) {
     return this.startSession(res, await this.demo.createDemoUser());
   }

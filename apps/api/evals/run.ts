@@ -3,7 +3,7 @@
  * Costs real money (a few cents per run): pnpm --filter api eval   (needs ANTHROPIC_API_KEY)
  */
 import 'dotenv/config';
-import Anthropic from '@anthropic-ai/sdk';
+import { Anthropic } from '@anthropic-ai/sdk';
 import { SAMPLE_PROFILE } from '../src/demo/fixtures.js';
 import { ClaudeProvider } from '../src/llm/claude.provider.js';
 import type { LlmUsage } from '../src/llm/llm.types.js';
