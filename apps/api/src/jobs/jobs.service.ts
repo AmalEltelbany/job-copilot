@@ -137,7 +137,7 @@ export class JobsService {
       summary: fit.summary,
       roleSeniority: fit.roleSeniority,
       requirements: fit.requirements,
-      model: job.user.isDemo ? 'fake' : 'claude',
+      model: this.llm.modelLabel(job.user),
     };
     await this.prisma.match.upsert({ where: { jobId }, create: { jobId, ...data }, update: data });
   }

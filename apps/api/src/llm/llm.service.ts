@@ -30,13 +30,24 @@ export class LlmService {
         : this.fake;
   }
 
-  /** Demo accounts always use the fake provider: a public demo must not be able to spend real money. */
-  providerFor(user: { isDemo: boolean }): LlmProvider {
-    return user.isDemo ? this.fake : this.real;
+  /**
+   * Demo accounts always use the fake provider, and so does anyone not on REAL_LLM_EMAILS when that list is set:
+   * a public deployment must not let strangers spend real money.
+   */
+  providerFor(user: { isDemo: boolean; email: string }): LlmProvider {
+    if (user.isDemo) return this.fake;
+    const allowed = this.config.get('REAL_LLM_EMAILS');
+    if (allowed.length > 0 && !allowed.includes(user.email.toLowerCase())) return this.fake;
+    return this.real;
+  }
+
+  /** Label stored with results, so it's clear which were judged by the real model. */
+  modelLabel(user: { isDemo: boolean; email: string }): string {
+    return this.providerFor(user) === this.fake ? 'fake' : this.config.get('CLAUDE_MODEL');
   }
 
   async run<T>(
-    user: { id: string; isDemo: boolean },
+    user: { id: string; isDemo: boolean; email: string },
     purpose: LlmPurpose,
     call: (provider: LlmProvider) => Promise<LlmResult<T>>,
   ): Promise<T> {

@@ -10,6 +10,14 @@ const envSchema = z
     ANTHROPIC_API_KEY: z.string().optional(),
     CLAUDE_MODEL: z.string().default('claude-opus-5-5'),
     LLM_DAILY_LIMIT: z.coerce.number().int().positive().default(150),
+    /**
+     * Comma-separated emails allowed to use the real model. Empty means everyone.
+     * On a public deployment, list only your own so strangers can't spend your API credit.
+     */
+    REAL_LLM_EMAILS: z
+      .string()
+      .default('')
+      .transform((v) => v.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)),
   })
   .refine((env) => env.LLM_PROVIDER !== 'claude' || !!env.ANTHROPIC_API_KEY, {
     message: 'ANTHROPIC_API_KEY is required when LLM_PROVIDER=claude',

@@ -22,3 +22,6 @@ services:
         sync: false
       - key: LLM_DAILY_LIMIT
         value: "150"
+      # Only these emails use real Claude; everyone else gets the free simulated model.
+      - key: REAL_LLM_EMAILS
+        sync: false

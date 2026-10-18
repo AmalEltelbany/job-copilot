@@ -50,7 +50,7 @@ e2e              Playwright: demo journey and CV upload
 - A rule-based prefilter runs before any model call.
 - Scoring is idempotent per profile version: a job already scored against the current profile is never scored again, and re-syncing a board only scores new postings.
 - At most 40 jobs are queued per sync or profile change.
-- A per-user daily cap on model calls (`LLM_DAILY_LIMIT`), enforced in one place (`LlmService.run`) that also logs token usage per call.
+- A per-user daily cap on model calls (`LLM_DAILY_LIMIT`), enforced in one place (`LlmService.run`) that also logs token usage per call. On a public deployment, `REAL_LLM_EMAILS` limits the real model to listed accounts.
 - Instructions plus profile form a stable prefix with a cache breakpoint, so every job scored for a user reuses the cached prefix.
 - Scoring runs at low effort (a screening judgment), while drafting and fact-checking use medium.
 
@@ -88,7 +88,7 @@ pnpm dev                                    # API on :4100, web on :3100
 ## Deploy
 
 1. **Database:** a free Postgres on [Neon](https://neon.tech).
-2. **API on Render:** New → Blueprint → this repo (`render.yaml`). Set `DATABASE_URL` and `ANTHROPIC_API_KEY`.
+2. **API on Render:** New → Blueprint → this repo (`render.yaml`). Set `DATABASE_URL`, `ANTHROPIC_API_KEY`, and `REAL_LLM_EMAILS` to your own email, so other sign-ups get the free simulated model instead of spending your API credit.
 3. **Web on Vercel:** import the repo with root directory `apps/web`, and set `API_URL` to the Render URL.
 
 ## What I'd add next
