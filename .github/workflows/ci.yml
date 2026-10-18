@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: copilot
+          POSTGRES_PASSWORD: copilot
+          POSTGRES_DB: copilot_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U copilot" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://copilot:copilot@localhost:5432/copilot_test?schema=public
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter @copilot/shared build
+
+      - name: API lint and typecheck
+        run: pnpm --filter api lint && pnpm --filter api typecheck
+      - name: API unit tests (filters, job-board adapters, fact-check loop)
+        run: pnpm --filter api test
+      - name: API migrations
+        run: pnpm --filter api db:deploy
+      - name: API end-to-end tests (real Postgres and job queue, fake model)
+        run: pnpm --filter api test:e2e
+
+      - name: Web lint and typecheck
+        run: pnpm --filter web lint && pnpm --filter web typecheck
+
+      - name: Build
+        run: pnpm --filter api build && pnpm --filter web build
+        env:
+          API_URL: http://localhost:4100
+
+      - name: Browser tests
+        run: pnpm --filter @copilot/e2e exec playwright install --with-deps chromium && pnpm --filter @copilot/e2e test:browser
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: e2e/test-results
