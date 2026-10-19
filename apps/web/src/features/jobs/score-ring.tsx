@@ -2,7 +2,7 @@ import type { Verdict } from "@copilot/shared";
 
 const ringColor: Record<Verdict, string> = {
   STRONG: "text-accent",
-  GOOD: "text-sky-600 dark:text-sky-400",
+  GOOD: "text-[#3f6fd1]",
   STRETCH: "text-gold",
   SKIP: "text-muted",
 };
@@ -32,7 +32,7 @@ export function ScoreRing({ score, verdict, size = "sm" }: { score: number; verd
           style={{ "--ring-length": length } as React.CSSProperties}
         />
       </svg>
-      <span className={`font-display font-semibold tabular-nums ${text}`}>{score}</span>
+      <span className={`font-semibold tracking-tight tabular-nums ${text}`}>{score}</span>
     </span>
   );
 }

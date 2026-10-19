@@ -29,7 +29,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
-      <aside className="border-b border-border bg-surface lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-64 lg:shrink-0 lg:flex-col lg:border-b-0 lg:border-e">
+      <aside className="border-b border-border bg-surface-muted lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-64 lg:shrink-0 lg:flex-col lg:border-b-0 lg:border-e">
         <div className="flex items-center justify-between px-4 py-3 lg:px-5 lg:py-6">
           <Link href="/app" aria-label="Job Copilot home"><Logo /></Link>
           <Button variant="ghost" className="lg:hidden" onClick={() => logout.mutate()}>Sign out</Button>
@@ -54,7 +54,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {session.data?.isDemo && (
-          <p className="border-b border-gold/30 bg-gold-soft px-4 py-2.5 text-center text-sm">
+          <p className="border-b border-border bg-butter px-4 py-2.5 text-center text-sm">
             You&apos;re in the demo: sample candidate, sample jobs, and a simulated AI so nothing costs money.{" "}
             <Link href="/register" className="font-medium text-accent underline-offset-4 hover:underline">Create an account</Link> to use your own CV.
           </p>
@@ -69,7 +69,7 @@ export function PageHeader({ title, description, actions }: { title: string; des
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1 className="font-display text-4xl font-medium tracking-tight">{title}</h1>
+        <h1 className="headline text-[40px]">{title}</h1>
         {description && <p className="mt-2 max-w-2xl text-muted">{description}</p>}
       </div>
       {actions}
@@ -91,7 +91,7 @@ function MainNav({ pathname }: { pathname: string | null }) {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`flex shrink-0 items-center gap-3 rounded-md px-3 py-2 ${active ? "bg-accent-soft font-medium text-accent" : "text-muted hover:bg-surface-muted hover:text-foreground"}`}
+            className={`flex shrink-0 items-center gap-3 rounded-md px-3 py-2 ${active ? "bg-surface font-medium text-foreground shadow-[0_0_0_1px_var(--hairline)]" : "text-foreground/60 hover:bg-surface/70 hover:text-foreground"}`}
           >
             <svg aria-hidden viewBox="0 0 24 24" className="size-4.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d={item.icon} />

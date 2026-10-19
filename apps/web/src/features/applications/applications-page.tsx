@@ -25,8 +25,8 @@ export function ApplicationsPage() {
               <ul className="flex flex-col gap-2">
                 {items.map((a) => (
                   <li key={a.id}>
-                    <Link href={`/app/jobs/${a.job.id}`} className="block rounded-md border border-border bg-surface p-3 text-sm shadow-sm transition hover:border-accent/40 hover:shadow-md">
-                      <span className="font-display font-semibold">{a.job.title}</span>
+                    <Link href={`/app/jobs/${a.job.id}`} className="block rounded-md border border-border bg-surface p-3 text-sm transition-colors duration-200 hover:border-foreground/25">
+                      <span className="font-semibold tracking-tight">{a.job.title}</span>
                       <span className="block text-xs text-muted">{a.job.company}</span>
                       {a.unsupportedClaims.length > 0 && <span className="mt-1.5 block text-xs text-gold">⚠ letter needs checking</span>}
                     </Link>

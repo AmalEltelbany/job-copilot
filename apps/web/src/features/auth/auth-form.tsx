@@ -48,12 +48,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const serverError = submit.error instanceof ApiError ? submit.error.message : null;
 
   return (
-    <div className="paper-lines flex flex-1 flex-col items-center justify-center px-4 py-12">
+    <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
       <Link href="/" className="mb-8" aria-label="Job Copilot home">
         <Logo />
       </Link>
-      <div className="w-full max-w-md rounded-xl border border-border bg-surface p-8 shadow-[0_24px_60px_-35px_rgba(22,32,27,0.4)]">
-        <h1 className="font-display text-3xl font-medium tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
+      <div className="w-full max-w-md rounded-xl border border-border bg-surface p-8">
+        <h1 className="headline text-4xl">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-2 text-muted">
           {mode === "login" ? "Sign in to see your matches." : "Then upload your CV to get started."}
         </p>
@@ -98,8 +98,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
           )}
         </p>
       </div>
-      <p className="mt-10 max-w-md text-center font-display text-lg italic text-muted">
-        &ldquo;A few well-matched, honest applications beat a hundred sent blind.&rdquo;
+      <p className="mt-10 max-w-md rotate-[-2deg] text-center font-hand text-[26px] leading-tight text-pen">
+        a few honest, well-matched applications beat a hundred sent blind
       </p>
     </div>
   );

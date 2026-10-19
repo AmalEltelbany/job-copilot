@@ -1,83 +1,125 @@
 @import "tailwindcss";
 
-/* Job Copilot: calm and editorial. Cream paper, deep green ink, a touch of gold. */
+/*
+ * Job Copilot: "the job-search notebook".
+ * Warm paper, white pages with hairline edges, one green action colour, and sticky-note panels.
+ * The copilot's voice is a red editor's pen: circles, ticks and margin notes on real postings.
+ * Inspired by calm, paper-like workspace tools, built around the product's own idea.
+ */
 :root {
-  --background: #f7f4ec;
-  --surface: #fffdf8;
-  --surface-muted: #efeadf;
-  --foreground: #16201b;
-  --muted: #5f6b64;
-  --border: #e3ddcf;
-  --accent: #1f5f4a;
-  --accent-foreground: #ffffff;
-  --accent-soft: #dcebe3;
-  --gold: #b7862b;
-  --gold-soft: #f6ead0;
+  color-scheme: light;
+
+  --canvas: #f5f3ee;
+  --page: #ffffff;
+  --well: #efece5;
+  --ink: #191714;
+  --graphite: #6b655d;
+  --faint: #a19a8f;
+  --hairline: rgb(25 23 20 / 0.1);
+
+  --green: #127a5a;
+  --green-tint: #e2f2ea;
+
+  --apricot: #ffc27a;
+  --tomato: #ff7a5c;
+  --cornflower: #a9c6ff;
+  --butter: #fde9b0;
+  --forest: #10241c;
+  --highlight: #ffd9a8;
+  --pen: #e0472c;
+
+  --amber-text: #9a5a0c;
+  --amber-tint: #fdebd3;
   --danger: #b42318;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0d1210;
-    --surface: #141b18;
-    --surface-muted: #1b2420;
-    --foreground: #ece7dc;
-    --muted: #9aa59f;
-    --border: #26302c;
-    --accent: #5cc39a;
-    --accent-foreground: #0b1410;
-    --accent-soft: #173327;
-    --gold: #e0b45c;
-    --gold-soft: #3a2f17;
-    --danger: #f97066;
-  }
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-surface-muted: var(--surface-muted);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent-soft: var(--accent-soft);
-  --color-gold: var(--gold);
-  --color-gold-soft: var(--gold-soft);
+  /* Semantic roles used across the app */
+  --color-background: var(--canvas);
+  --color-surface: var(--page);
+  --color-surface-muted: var(--well);
+  --color-foreground: var(--ink);
+  --color-muted: var(--graphite);
+  --color-faint: var(--faint);
+  --color-border: var(--hairline);
+  --color-accent: var(--green);
+  --color-accent-foreground: #ffffff;
+  --color-accent-soft: var(--green-tint);
+  --color-gold: var(--amber-text);
+  --color-gold-soft: var(--amber-tint);
   --color-danger: var(--danger);
+
+  /* Panels and marks */
+  --color-apricot: var(--apricot);
+  --color-tomato: var(--tomato);
+  --color-cornflower: var(--cornflower);
+  --color-butter: var(--butter);
+  --color-forest: var(--forest);
+  --color-highlight: var(--highlight);
+  --color-pen: var(--pen);
+
   --font-sans: var(--font-inter);
-  --font-display: var(--font-fraunces);
-  --font-mono: var(--font-jetbrains);
+  --font-serif: var(--font-newsreader);
+  --font-hand: var(--font-caveat);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--canvas);
+  color: var(--ink);
   font-family: var(--font-sans), system-ui, sans-serif;
+  font-feature-settings: "lnum" on;
 }
 
-/* Fine paper grain, used behind the hero and auth pages. */
-.paper-lines {
-  background-image: linear-gradient(color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 1px);
-  background-size: 100% 32px;
+/* Headlines: semibold sans with tracking that tightens as the size grows. */
+.headline {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
 }
 
+/* The highlight pill that sits behind one word of a headline. */
+.word-pill {
+  display: inline-block;
+  border-radius: 9999px;
+  background: var(--highlight);
+  padding: 0 0.32em 0.04em;
+  line-height: 1.1;
+}
+
+/* A hand-drawn circle around a word, drawn in the editor's red pen. */
+.pen-circle {
+  position: relative;
+  white-space: nowrap;
+}
+.pen-circle::after {
+  content: "";
+  position: absolute;
+  inset: -0.12em -0.3em;
+  border: 2px solid var(--pen);
+  border-radius: 50% 46% 52% 44% / 56% 50% 48% 52%;
+  transform: rotate(-3deg);
+  pointer-events: none;
+}
+
+@keyframes pop {
+  0% { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+  70% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
 @keyframes rise {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes draw-ring {
   from { stroke-dashoffset: var(--ring-length); }
 }
 
-.animate-rise { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.animate-draw-ring { animation: draw-ring 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+/* Springy entrances for the pen marks; everything else uses quiet 200ms transitions. */
+.animate-pop { animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-rise { animation: rise 0.6s ease both; }
+.animate-draw-ring { animation: draw-ring 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-rise,
-  .animate-draw-ring {
-    animation: none;
-  }
+  .animate-pop, .animate-rise, .animate-draw-ring { animation: none; }
 }

@@ -20,14 +20,14 @@ export function JobDetail({ jobId }: { jobId: string }) {
     <div className="grid gap-10 lg:grid-cols-[1fr_24rem]">
       <article>
         <Link href="/app/jobs" className="text-sm text-muted hover:text-foreground">← Jobs</Link>
-        <h1 className="mt-4 font-display text-4xl font-medium leading-tight tracking-tight">{j.title}</h1>
+        <h1 className="headline mt-4 text-[40px]">{j.title}</h1>
         <p className="mt-1 text-muted">
           {j.company} · {j.location || "Location not given"}{j.remote && !/remote/i.test(j.location) ? " · Remote" : ""}
         </p>
         <a href={j.url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm text-accent hover:underline">
           View the original posting ↗
         </a>
-        <h2 className="mb-3 mt-10 font-display text-2xl font-medium">About the role</h2>
+        <h2 className="mb-3 mt-10 text-xl font-semibold tracking-tight">About the role</h2>
         <p className="whitespace-pre-line leading-relaxed text-muted">{j.description || "No description provided."}</p>
       </article>
 
@@ -66,7 +66,7 @@ function MatchPanel({ job }: { job: JobDetailDto }) {
             </span>
             <span className={r.mustHave ? "font-medium" : ""}>{r.requirement}</span>
             {r.mustHave && <span className="ms-1 text-xs text-muted">(must-have)</span>}
-            {r.evidence && <span className="block ps-7 font-display text-[13px] italic text-muted">&ldquo;{r.evidence}&rdquo;</span>}
+            {r.evidence && <span className="block ps-7 font-serif text-[15px] italic text-muted">&ldquo;{r.evidence}&rdquo;</span>}
           </li>
         ))}
       </ul>
@@ -147,7 +147,7 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
         rows={12}
         placeholder="Draft a letter, or write your own."
         aria-label="Cover letter"
-        className="mt-3 w-full rounded-md border border-border bg-background px-3.5 py-3 font-display text-[15px] leading-relaxed outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+        className="mt-3 w-full rounded-md border border-border bg-background px-3.5 py-3 font-serif text-[16px] leading-relaxed outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
       />
       <div className="mt-2 flex gap-2">
         <Button variant="secondary" disabled={!dirty || update.isPending} onClick={() => update.mutate({ coverLetter: letter })}>
@@ -171,7 +171,7 @@ function ApplicationEditor({ app, applyUrl, onChange }: { app: ApplicationDto; a
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-border bg-surface p-5 shadow-sm" aria-label={title}>
+    <section className="rounded-xl border border-border bg-surface p-5" aria-label={title}>
       <h2 className="mb-4 text-xs font-medium uppercase tracking-widest text-muted">{title}</h2>
       {children}
     </section>

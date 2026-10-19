@@ -33,25 +33,25 @@ export function Dashboard() {
         <Stat label="AI calls today" value={`${d.usage.llmCallsToday} / ${d.usage.dailyLimit}`} />
       </section>
 
-      <h2 className="mb-4 mt-12 font-display text-2xl font-medium">Getting started</h2>
+      <h2 className="mb-4 mt-12 text-xl font-semibold tracking-tight">Getting started</h2>
       <ol className="grid gap-3 sm:grid-cols-3">
         {steps.map((step, i) => (
           <li key={step.title}>
             <Link
               href={step.href}
-              className={`block h-full rounded-xl border p-5 transition hover:-translate-y-0.5 hover:shadow-md ${step.done ? "border-accent/30 bg-accent-soft/60" : "border-border bg-surface"}`}
+              className={`block h-full rounded-xl border p-5 transition-colors duration-200 hover:border-foreground/25 ${step.done ? "border-accent/30 bg-accent-soft/60" : "border-border bg-surface"}`}
             >
               <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${step.done ? "text-accent" : "text-muted"}`}>
                 {step.done ? "✓ Done" : `Step ${i + 1}`}
               </span>
-              <span className="mt-2 block font-display text-lg font-semibold">{step.title}</span>
+              <span className="mt-2 block text-[17px] font-semibold tracking-tight">{step.title}</span>
               <span className="mt-1 block text-sm text-muted">{step.body}</span>
             </Link>
           </li>
         ))}
       </ol>
 
-      <h2 className="mb-3 mt-12 font-display text-2xl font-medium">Applications</h2>
+      <h2 className="mb-3 mt-12 text-xl font-semibold tracking-tight">Applications</h2>
       <p className="text-muted">
         {Object.keys(d.applications).length === 0
           ? "None yet. Open a job you like and start one."
@@ -65,7 +65,7 @@ function Stat({ label, value, hint }: { label: string; value: number | string; h
   return (
     <div className="bg-surface p-5">
       <p className="text-xs font-medium uppercase tracking-wider text-muted">{label}</p>
-      <p className="mt-2 font-display text-4xl font-medium tabular-nums">{value}</p>
+      <p className="mt-2 text-4xl font-semibold tracking-tight tabular-nums">{value}</p>
       {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
     </div>
   );

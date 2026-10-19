@@ -49,7 +49,7 @@ export function JobList() {
           <li key={job.id}>
             <Link
               href={`/app/jobs/${job.id}`}
-              className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-surface px-5 py-4 transition hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
+              className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-surface px-5 py-4 transition-colors duration-200 hover:border-foreground/25"
             >
               {job.match ? (
                 <ScoreRing score={job.match.score} verdict={job.match.verdict} />
@@ -59,7 +59,7 @@ export function JobList() {
                 </span>
               )}
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-lg font-semibold">{job.title}</p>
+                <p className="truncate text-[17px] font-semibold tracking-tight">{job.title}</p>
                 <p className="truncate text-sm text-muted">
                   {job.company} · {job.location || "Location not given"}{job.remote && !/remote/i.test(job.location) ? " · Remote" : ""}
                 </p>
